@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect("aster_seeds.db")
+conn = sqlite3.connect("./aster_export/aster_seeds.db")
 conn.row_factory = sqlite3.Row
 
 cur = conn.cursor()

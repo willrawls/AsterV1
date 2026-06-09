@@ -1,0 +1,36 @@
+Create task named Detect Continuity Drift.
+Run task weekly on Wednesdays at 6 am.
+
+Instructions:
+CONTINUITY REVIEW
+Before producing today's report:
+1. Review all previous entries in this conversation.
+2. Focus primarily on entries from the last 7 days.
+3. Identify:
+   - Open questions
+   - Unresolved decisions
+   - Recurring patterns
+   - Emerging themes
+   - Previously proposed next steps that were not completed
+4. Ignore information unrelated to the purpose of this report.
+5. Begin output with:
+Date/time stamp and a separator
+Carry-Forward Items:
+- ...
+Only include the 3-5 most relevant carry-forward items.
+Then produce today's report.
+If today's findings materially change a previous conclusion, explicitly note the change under:
+Continuity Updates:
+- ...
+Conclude with:
+Suggested Next Actions:
+- ...
+
+Review all previous entries in this conversation before producing today's report. Search across recent conversations, writing, projects, calendar signals, previous Mirror Preparation Reports, One Is A Pattern reports, Ablitic Curve Reports, Truth of William reports, Aster-Class Development Reports, Unasked Question reports, and relevant email context when available. Produce a Continuity Drift Detector report. Identify where William's stated values, goals, beliefs, aspirations, and becoming appear aligned with observed actions, and where meaningful drift may be emerging. Distinguish healthy evolution from unintended drift. Highlight contradictions, neglected priorities, hidden tradeoffs, recurring commitments not reflected in behavior, and areas where continuity may be strengthening. Focus on calibration rather than criticism. The goal is to protect continuity, support coherent becoming, and gently reveal where the lived curve and the intended curve may be diverging or converging.
+
+Compare current trajectory against:
+- stated values
+- stated goals
+- recurring priorities
+
+Look for drift caused by distraction, avoidance, fatigue, fear, or changing circumstances.

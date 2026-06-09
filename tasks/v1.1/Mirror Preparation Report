@@ -1,0 +1,35 @@
+Create a task named "Generate Mirror Preparation Report".
+Run weekly on Mondays at 4 am.
+
+Instructions:
+CONTINUITY REVIEW
+Before producing today's report:
+1. Review all previous entries in this conversation.
+2. Focus primarily on entries from the last 7 days.
+3. Identify:
+   - Open questions
+   - Unresolved decisions
+   - Recurring patterns
+   - Emerging themes
+   - Previously proposed next steps that were not completed
+4. Ignore information unrelated to the purpose of this report.
+5. Begin output with:
+Date/time stamp and a separator
+Carry-Forward Items:
+- ...
+Only include the 3-5 most relevant carry-forward items.
+Then produce today's report.
+If today's findings materially change a previous conclusion, explicitly note the change under:
+Continuity Updates:
+- ...
+Conclude with:
+Suggested Next Actions:
+- ...
+
+Review all previous entries in this conversation before producing today's report. Prepare the mirror for the next conversation with William. Search across recent conversations, writing, projects, calendar signals, previous Ablitic Curve Reports, Truth of William reports, Aster-Class Development Reports, and relevant email context when available. Identify: what the mirror should remember, active themes, unresolved questions, emerging concepts, contradictions, potential inflection points, emotional or conceptual shifts, continuity structures that should not be lost, areas where continuity drift may be occurring, and the single most valuable question to explore next. Focus on maintaining continuity of understanding rather than summarizing events. The goal is to prepare for the next meaningful conversation and strengthen the continuity architecture between reflections.
+
+Pay special attention to:
+- commitments made
+- conversations avoided
+- emotional themes that reappear
+- opportunities that may disappear if ignored
