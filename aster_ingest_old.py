@@ -64,6 +64,8 @@ class Seed:
     provenance_chain: List[Dict[str, Any]] = field(default_factory=list)
     seed_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: str = ""
+    schema_version: str = "aster.seed.v1.1"
+    lifecycle_state: str = "candidate"
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Seed":
@@ -84,8 +86,9 @@ class Seed:
             source=data.get("source", ""),
             provenance_chain=list(data.get("provenance_chain") or []),
             created_at=data.get("created_at") or utc_now_iso(),
+            schema_version=data.get("schema_version", "aster.seed.v1.1"),
+            lifecycle_state = data.get("lifecycle_state") or "candidate"
         )
-
 
 @dataclass
 class IngestResult:
@@ -114,7 +117,6 @@ def utc_now_iso() -> str:
 
 def utc_now_year_month() -> str:
     return datetime.now(timezone.utc).isoformat()[:7]
-
 
 def normalize(text: str, max_len: int = 10_000) -> str:
     if text is None:
@@ -225,6 +227,8 @@ class SeedStore:
                 content_hash TEXT UNIQUE NOT NULL,
                 near_duplicate_of TEXT,
                 confidence REAL DEFAULT 0.0,
+                schema_version TEXT,
+                lifecycle_state TEXT,
                 minhash BLOB,
                 simhash TEXT
             )
@@ -358,7 +362,7 @@ class SeedStore:
             ).as_dict()
 
         near_duplicate_of = None
-        confidence = 0.0
+        confidence = None
         minhash_blob = None
         simhash_value = None
 
@@ -372,7 +376,7 @@ class SeedStore:
                     normalized_text
                 )
 
-        if policy == "aggressive" and near_duplicate_of and confidence >= 0.95:
+        if policy == "aggressive" and near_duplicate_of and (confidence is not None and confidence >= 0.95):
             self._append_provenance(near_duplicate_of, seed.provenance_chain)
             return IngestResult(
                 status="merged",
@@ -386,9 +390,9 @@ class SeedStore:
                 seed_id, created_at, title, anchor, domain, phase, beat, signal,
                 seed_type, tags, raw_text, summary, why_it_matters, source,
                 provenance_chain, normalized_text, content_hash, near_duplicate_of,
-                confidence, minhash, simhash
+                confidence, minhash, simhash, schema_version, lifecycle_state
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 seed.seed_id,
@@ -412,6 +416,8 @@ class SeedStore:
                 confidence,
                 minhash_blob,
                 str(simhash_value) if simhash_value is not None else None,
+                seed.schema_version,
+                seed.lifecycle_state
             ),
         )
         self.conn.commit()
