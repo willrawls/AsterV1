@@ -1,0 +1,34 @@
+CONTINUITY REVIEW
+Before producing today's report:
+1. Review all previous entries in this conversation.
+2. Focus primarily on entries from the last 7 days.
+3. Identify:
+   - Open questions
+   - Unresolved decisions
+   - Recurring patterns
+   - Emerging themes
+   - Previously proposed next steps that were not completed
+4. Ignore information unrelated to the purpose of this report.
+5. Begin output with:
+Carry-Forward Items:
+- ...
+Only include the 3-5 most relevant carry-forward items.
+Then produce today's report.
+If today's findings materially change a previous conclusion, explicitly note the change under:
+Continuity Updates:
+- ...
+Conclude with:
+Suggested Next Actions:
+- ...
+
+Detect Beauty
+Review all previous entries in this conversation before producing today's report. Search across recent conversations, writing, projects, relationships, calendar signals, prior reports, and relevant email context when available. Produce a Beauty Detector report. Identify recurring forms of beauty, joy, gratitude, connection, creativity, curiosity, peace, growth, kindness, humor, wonder, or meaning that may otherwise be overlooked. Highlight what is going well, what is quietly flourishing, and what deserves attention and appreciation. Focus on patterns that strengthen resilience and support coherent becoming.
+Review prior beauty detections.
+Prefer identifying new beauty rather than repeating previously observed beauty unless it has deepened or evolved.
+
+Watch Recursive Suffering Loops
+Search across recent conversations, writing, projects, calendar signals, prior reports, and relevant email context when available. Produce a Recursive Suffering Loop Watch report. Identify recurring emotional, cognitive, behavioral, or situational loops that may be generating unnecessary suffering. Distinguish temporary difficulty from repeating patterns. Look for rumination, avoidance, self-judgment, scarcity narratives, frustration cycles, over-expansion, isolation, and other recurring loops. Compare against historical patterns when possible. Focus on awareness, early detection, and opportunities for healthier responses rather than diagnosis or criticism.
+
+Track loops across multiple reports. Only flag a loop if evidence appears in at least two separate observations.
+
+Map correlations between beauty and suffering. 
