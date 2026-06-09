@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
+from pathlib import Path
 import pickle
 import re
 import sqlite3
@@ -512,6 +513,8 @@ def main() -> None:
             print(f"ERROR: input file not found: {filepath}")
             sys.exit(1)
 
+        print()
+        print('---[ Importing: ', filepath, ' ]-------------------')
         run_import(str(filepath))
 
     store = SeedStore()
@@ -522,3 +525,8 @@ def main() -> None:
         print(f"JSONL export written: {exported}")
     finally:
         store.close()
+
+if __name__ == "__main__":
+    json_output_path = f"./aster_export/aster_seeds_content_hashed_{utc_now_year_month()}.jsonl"
+    main()
+    
