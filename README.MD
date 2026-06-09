@@ -1,6 +1,10 @@
 Here’s a short, practical README for an **Aster seed ingest** script that saves, deduplicates, and audits your seeds with sane defaults and quick fixes.
 
 ---
+# README - Build Guide v1.1.0
+Start here: [BuildGuide_v1](articles\BuildGuide_v1.md)
+Then here: [BuildGuide_v1.1](articles\BuildGuide_v1.1.md)
+Current definitions for v1.1 tasks are in [Tasks](tasks/v1.1/)
 
 # README — Aster seed ingest (short)
 
@@ -21,7 +25,14 @@ Store Aster “seeds” reliably with:
 python aster_ingest.py
 ```
 
-This demo writes `./aster_seeds.db`, performs three ingest attempts, and exports `seeds_export.jsonl`.
+This demo writes `./aster_export/aster_seeds.db`, performs three ingest attempts, and exports `./aster_export/aster_seeds_content_hashed_YEAR-MONTH-DAY_.jsonl`.
+
+```bash
+python dump_db.py
+```
+This will dump the entire contents of "./aster_export/aster_seeds.db" which can be quite long. Check the .py file for parameters to cull the output.
+
+The idea being you can seed.json1 files and upload them to you AsterV1 ChatGPT folder.
 
 2. For production, import and call:
 
