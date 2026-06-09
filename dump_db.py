@@ -1,5 +1,10 @@
 import argparse
+import base64
+import json
 import sqlite3
+import sys
+import traceback
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -19,6 +24,29 @@ def parse_args():
 
 def quote_identifier(name: str) -> str:
     return '"' + name.replace('"', '""') + '"'
+
+
+def json_default(value):
+    if isinstance(value, sqlite3.Row):
+        return dict(value)
+
+    if isinstance(value, bytes):
+        return {
+            "__type__": "bytes",
+            "base64": base64.b64encode(value).decode("ascii"),
+        }
+
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+
+print("RUNNING FILE:", __file__)
+print("PYTHON:", sys.executable)
 
 
 args = parse_args()
@@ -75,9 +103,12 @@ for table in tables:
         print(f"Rows: {len(rows)}")
 
         for row in rows:
-            print(dict(row))
+            obj = dict(row)
 
-    except Exception as ex:
-        print("ERROR:", ex)
+            print(json.dumps(obj, ensure_ascii=True, default=json_default))
+            print()
+
+    except Exception:
+        traceback.print_exc()
 
 conn.close()

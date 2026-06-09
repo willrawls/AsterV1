@@ -37,9 +37,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-
 json_output_path = ""
-
 
 try:
     from datasketch import MinHash, MinHashLSH
@@ -455,12 +453,12 @@ class SeedStore:
             """
         ).fetchall()
 
-        with open(out_path, "w", encoding="utf-8") as f:
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
             for row in rows:
                 obj = dict(row)
                 obj["tags"] = json.loads(obj.get("tags") or "[]")
                 obj["provenance_chain"] = json.loads(obj.get("provenance_chain") or "[]")
-                f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+                f.write(json.dumps(obj, ensure_ascii=True) + "\n")
 
         return out_path
 
