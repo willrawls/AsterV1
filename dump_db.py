@@ -1,11 +1,36 @@
+import argparse
 import sqlite3
 
-conn = sqlite3.connect("./aster_export/aster_seeds.db")
-conn.row_factory = sqlite3.Row
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--db", default="./aster_export/aster_seeds.db")
+    parser.add_argument(
+        "--filter",
+        default=None,
+        help="Comma-delimited list of fields to output, e.g. seed_id,title,created_at",
+    )
+    parser.add_argument(
+        "--fields",
+        action="store_true",
+        help="Output only field names and types per table",
+    )
+    return parser.parse_args()
 
+
+def quote_identifier(name: str) -> str:
+    return '"' + name.replace('"', '""') + '"'
+
+
+args = parse_args()
+
+selected_fields = None
+if args.filter:
+    selected_fields = [f.strip() for f in args.filter.split(",") if f.strip()]
+
+conn = sqlite3.connect(args.db)
+conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
-# Show tables
 cur.execute("""
 SELECT name
 FROM sqlite_master
@@ -19,14 +44,32 @@ print("TABLES:")
 for t in tables:
     print(" ", t)
 
-# Dump contents
 for table in tables:
     print("\n" + "=" * 80)
     print(table)
     print("=" * 80)
 
     try:
-        cur.execute(f"SELECT * FROM {table}")
+        cur.execute(f"PRAGMA table_info({quote_identifier(table)})")
+        columns = cur.fetchall()
+        column_names = [c["name"] for c in columns]
+
+        if args.fields:
+            for col in columns:
+                print(f"{col['name']}: {col['type']}")
+            continue
+
+        if selected_fields:
+            missing = [f for f in selected_fields if f not in column_names]
+            if missing:
+                print(f"ERROR: field(s) not found in {table}: {', '.join(missing)}")
+                continue
+
+            fields_sql = ", ".join(quote_identifier(f) for f in selected_fields)
+        else:
+            fields_sql = "*"
+
+        cur.execute(f"SELECT {fields_sql} FROM {quote_identifier(table)}")
         rows = cur.fetchall()
 
         print(f"Rows: {len(rows)}")

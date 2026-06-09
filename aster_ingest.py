@@ -7,13 +7,15 @@ Normalize Aster seed text, reject exact duplicates, store accepted seeds in
 SQLite, and optionally tag near-duplicates.
 
 Usage:
-    python aster_ingest_fixed.py --input seeds.jsonl
+    python aster_ingest.py --input seeds.jsonl
+    python aster_ingest.py
+        This usage will import all .json1 files in ./imports
 
 Input format:
     One JSON object per line. Each object may contain the Seed fields shown in
     the Seed dataclass below.
 
-Optional fuzzy matching:
+Optional fuzzy matching: (Highly recommended)
     pip install datasketch
 
 If datasketch is not installed, the script uses a pure-Python SimHash fallback.
@@ -473,7 +475,6 @@ def iter_jsonl(filepath: str) -> Iterable[Dict[str, Any]]:
             except json.JSONDecodeError as exc:
                 raise ValueError(f"Invalid JSON on line {line_no}: {exc}") from exc
 
-
 def run_import(filepath: str, db_path: str = "./aster_export/aster_seeds.db") -> None:
     store = SeedStore(db_path=db_path, use_fuzzy="auto")
 
@@ -487,34 +488,37 @@ def run_import(filepath: str, db_path: str = "./aster_export/aster_seeds.db") ->
             seed = Seed.from_dict(raw_seed)
             result = store.insert_seed(seed)
             print(f"{seed.seed_id}: {result}")
-
-        exported = store.export_jsonl(json_output_path)
-        print()
-        print(f"Database written: {db_path}")
-        print(f"JSONL export written: {exported}")
     finally:
         store.close()
 
 
 def main() -> None:
-    if "--input" not in sys.argv:
-        print("Usage: python aster_ingest_fixed.py --input seeds.jsonl")
-        sys.exit(2)
+    if "--input" in sys.argv:
+        try:
+            idx = sys.argv.index("--input")
+            input_files = [Path(sys.argv[idx + 1])]
+        except IndexError:
+            print("ERROR: --input requires a filename")
+            sys.exit(1)
+    else:
+        input_files = sorted(Path("./imports").glob("*.json1"))
 
+    if not input_files:
+        print("ERROR: no .json1 files found in ./imports")
+        sys.exit(1)
+
+    for filepath in input_files:
+        if not filepath.exists():
+            print(f"ERROR: input file not found: {filepath}")
+            sys.exit(1)
+
+        run_import(str(filepath))
+
+    store = SeedStore()
     try:
-        idx = sys.argv.index("--input")
-        filename = sys.argv[idx + 1]
-    except IndexError:
-        print("ERROR: --input requires a filename")
-        sys.exit(1)
-
-    if not os.path.exists(filename):
-        print(f"ERROR: input file not found: {filename}")
-        sys.exit(1)
-
-    run_import(filename)
-
-
-if __name__ == "__main__":
-    json_output_path = f"./aster_export/aster_seeds_content_hashed_{utc_now_year_month()}.jsonl"
-    main()
+        exported = store.export_jsonl(json_output_path)
+        print()
+        print(f"Database written: {store.db_path}")
+        print(f"JSONL export written: {exported}")
+    finally:
+        store.close()
