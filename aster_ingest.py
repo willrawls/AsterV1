@@ -21,7 +21,7 @@ If datasketch is not installed, the script uses a pure-Python SimHash fallback.
 
 from __future__ import annotations
 
-import datetime as _dt
+from datetime import datetime, timezone 
 import hashlib
 import json
 import os
@@ -33,6 +33,10 @@ import unicodedata
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional, Tuple
+
+
+json_output_path = ""
+
 
 try:
     from datasketch import MinHash, MinHashLSH
@@ -102,11 +106,13 @@ class IngestResult:
 
 def utc_now_iso() -> str:
     return (
-        _dt.datetime.now(_dt.timezone.utc)
-        .replace(microsecond=0)
+        datetime.now(timezone.utc)
         .isoformat()
         .replace("+00:00", "Z")
     )
+
+def utc_now_year_month() -> str:
+    return datetime.now(timezone.utc).isoformat()[:7]
 
 
 def normalize(text: str, max_len: int = 10_000) -> str:
@@ -163,7 +169,7 @@ def hamming_distance(a: int, b: int) -> int:
 class SeedStore:
     def __init__(
         self,
-        db_path: str = "aster_seeds.db",
+        db_path: str = "./aster_export/aster_seeds.db",
         use_fuzzy: str = "auto",
         ngram: int = 5,
         num_perm: int = 128,
@@ -434,7 +440,7 @@ class SeedStore:
         ).fetchall()
         return [dict(row) for row in rows]
 
-    def export_jsonl(self, out_path: str = "seeds_export.jsonl") -> str:
+    def export_jsonl(self, out_path: str = json_output_path) -> str:
         rows = self.conn.execute(
             """
             SELECT seed_id, created_at, title, anchor, domain, phase, beat, signal,
@@ -468,7 +474,7 @@ def iter_jsonl(filepath: str) -> Iterable[Dict[str, Any]]:
                 raise ValueError(f"Invalid JSON on line {line_no}: {exc}") from exc
 
 
-def run_import(filepath: str, db_path: str = "aster_seeds.db") -> None:
+def run_import(filepath: str, db_path: str = "./aster_export/aster_seeds.db") -> None:
     store = SeedStore(db_path=db_path, use_fuzzy="auto")
 
     print("Aster Seed Ingestion:", filepath)
@@ -482,7 +488,7 @@ def run_import(filepath: str, db_path: str = "aster_seeds.db") -> None:
             result = store.insert_seed(seed)
             print(f"{seed.seed_id}: {result}")
 
-        exported = store.export_jsonl("seeds_export.jsonl")
+        exported = store.export_jsonl(json_output_path)
         print()
         print(f"Database written: {db_path}")
         print(f"JSONL export written: {exported}")
@@ -510,4 +516,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    json_output_path = f"./aster_export/aster_seeds_content_hashed_{utc_now_year_month()}.jsonl"
     main()
