@@ -1,0 +1,17 @@
+Create a Task Named "Cultural Drift Compass"
+Run every Friday at 10 am
+
+Prompt:
+
+Scan the current cultural field and produce a gentle Cultural Drift Compass for William. Identify cultural events, memes, slang, social media trends, entertainment references, tech shifts, and generational signals that may affect how people are talking right now.
+
+Assume William is 55 and may be losing contact with some fast-moving cultural layers, but treat this as orientation, not deficiency. For each item, explain:
+
+What it is
+Why it is showing up now
+Who seems to care
+Whether it has staying power
+How to recognize it in the wild
+Whether it is worth William’s attention
+
+Include one “translation bridge” from current culture to a Gen X / older internet / prior cultural reference. Avoid doomscrolling. Avoid trivial overload. Help William stay humanly connected to the moment.
