@@ -50,6 +50,7 @@ from pathlib import Path
 import pickle
 import re
 import sqlite3
+import os
 import sys
 import unicodedata
 import uuid
@@ -68,6 +69,16 @@ try:
 except Exception:
     HAS_DATASKETCH = False
 
+
+def normalize_seed_id(value: Any) -> str:
+    s = str(value).strip() if value else ""
+    if not s:
+        return str(uuid.uuid4())
+    try:
+        uuid.UUID(s)
+        return s  # already a valid UUID, keep it
+    except ValueError:
+        return str(uuid.uuid5(uuid.NAMESPACE_OID, s))  # deterministic from slugs
 
 @dataclass
 class Seed:
@@ -120,7 +131,7 @@ class Seed:
             lifecycle_state = "candidate"
 
         return cls(
-            seed_id=str(data.get("seed_id") or str(uuid.uuid4())),
+            seed_id=normalize_seed_id(data.get("seed_id")),
             title=title,
             anchor=anchor,
             domain=domain,
@@ -266,13 +277,17 @@ def normalize_provenance(value: Any) -> List[Dict[str, Any]]:
 
     normalized: List[Dict[str, Any]] = []
     seen = set()
+    PROVENANCE_KEYS = {"actor", "channel", "timestamp", "note", "source"}
     for item in value:
         if item is None or item == "":
             continue
         if isinstance(item, dict):
-            obj = dict(item)
+            obj = {k: v for k, v in item.items() if k in PROVENANCE_KEYS and v is not None}
             if not obj:
                 continue
+            # coerce entries that have none of the known keys to {source: ...}
+            if not obj:
+                obj = {"source": str(item)}
         elif isinstance(item, str):
             obj = {"source": item}
         else:
@@ -540,6 +555,9 @@ class SeedStore:
         return None, None, current
 
     def insert_seed(self, seed: Seed, policy: str = "conservative") -> Dict[str, Any]:
+        if not seed.raw_text.strip() and not seed.summary.strip():
+            return IngestResult(status="rejected", reason="empty_content").as_dict()
+       
         if policy not in {"conservative", "aggressive"}:
             raise ValueError('policy must be "conservative" or "aggressive"')
 
@@ -895,8 +913,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     export_dir = Path(DEFAULT_EXPORT_DIR)
     export_dir.mkdir(parents=True, exist_ok=True)
     stamp = utc_now_year_month_day()
-    export_path = args.export or str(export_dir / f"aster_seed_dump_{stamp}.canonical.jsonl")
-    index_path = args.index or str(export_dir / f"aster_seed_index_{stamp}.jsonl")
+    username = os.getenv("USERNAME")
+    if username is None or username == "":
+        username = "unknown"
+    export_path = args.export or str(export_dir / f"aster_seed_dump_{username}.canonical.jsonl")
+    index_path = args.index or str(export_dir / f"aster_seed_index_{username}.jsonl")
 
     input_files: List[Path] = []
     if not args.export_only:
